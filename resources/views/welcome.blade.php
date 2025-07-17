@@ -60,7 +60,7 @@
                 <div class="w-full p-4 flex justify-center border-b">
                     <h2 class="text-xl sm:text-2xl font-bold text-primary text-center">Data Penduduk</h2>
                 </div>
-                <ul class="menu p-4 w-full text-base">
+                <ul class="menu p-4 w-full text-base gap-1">
                     <li>
                         <a href="{{ route('dashboard') }}" class="@if (request()->routeIs('dashboard')) active @endif">
                             <span class="text-lg">🏠</span>
@@ -78,6 +78,12 @@
                             class="@if (request()->routeIs('kabupaten.*')) active @endif">
                             <span class="text-lg">🏘️</span>
                             Kabupaten/Kota
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('penduduk.index') }}" class="@if (request()->routeIs('penduduk.*')) active @endif">
+                            <span class="text-lg">👥</span>
+                            Penduduk
                         </a>
                     </li>
                 </ul>

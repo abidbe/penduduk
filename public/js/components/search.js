@@ -9,9 +9,11 @@ class SearchComponent {
     }
 
     init() {
-        this.input.addEventListener("input", (e) => {
-            this.search(e.target.value);
-        });
+        if (this.input) {
+            this.input.addEventListener("input", (e) => {
+                this.search(e.target.value);
+            });
+        }
     }
 
     search(searchTerm) {
@@ -24,15 +26,22 @@ class SearchComponent {
 
         this.pagination.filter((row) => {
             return this.searchColumns.some((columnIndex) => {
-                const cellText =
-                    row.cells[columnIndex].textContent.toLowerCase();
+                const cell = row.cells[columnIndex];
+                if (!cell) return false;
+                const cellText = cell.textContent.toLowerCase();
                 return cellText.includes(term);
             });
         });
     }
 
     clear() {
-        this.input.value = "";
+        if (this.input) {
+            this.input.value = "";
+        }
         this.pagination.reset();
+    }
+
+    reset() {
+        this.clear();
     }
 }

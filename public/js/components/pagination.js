@@ -26,7 +26,7 @@ class PaginationComponent {
             this.allRows = Array.from(
                 tableBody.querySelectorAll("tr:not(#noDataRow)")
             );
-            this.filteredRows = this.allRows;
+            this.filteredRows = [...this.allRows]; // Create a copy
             this.update();
         }
     }
@@ -42,8 +42,11 @@ class PaginationComponent {
             // Tampilkan pesan tidak ada data
             if (noDataRow) {
                 noDataRow.style.display = "";
-                noDataRow.querySelector("td").innerHTML =
-                    '<div class="text-gray-500">Tidak ada data</div>';
+                const tdElement = noDataRow.querySelector("td");
+                if (tdElement) {
+                    tdElement.innerHTML =
+                        '<div class="text-gray-500">Tidak ada data</div>';
+                }
             }
 
             this.updatePagination(0);
@@ -71,8 +74,9 @@ class PaginationComponent {
 
         // Update nomor urut
         this.filteredRows.slice(startIndex, endIndex).forEach((row, index) => {
-            if (row.cells[0]) {
-                row.cells[0].textContent = startIndex + index + 1;
+            const firstCell = row.cells[0];
+            if (firstCell) {
+                firstCell.textContent = startIndex + index + 1;
             }
         });
 
@@ -80,13 +84,19 @@ class PaginationComponent {
     }
 
     updatePagination(totalPages) {
-        this.prevBtn.disabled = this.currentPage === 1;
-        this.nextBtn.disabled =
-            this.currentPage === totalPages || totalPages === 0;
-        this.pageInfo.textContent =
-            totalPages > 0
-                ? `Page ${this.currentPage} of ${totalPages}`
-                : "Page 0 of 0";
+        if (this.prevBtn) {
+            this.prevBtn.disabled = this.currentPage === 1;
+        }
+        if (this.nextBtn) {
+            this.nextBtn.disabled =
+                this.currentPage === totalPages || totalPages === 0;
+        }
+        if (this.pageInfo) {
+            this.pageInfo.textContent =
+                totalPages > 0
+                    ? `Page ${this.currentPage} of ${totalPages}`
+                    : "Page 0 of 0";
+        }
     }
 
     next() {
@@ -113,8 +123,13 @@ class PaginationComponent {
     }
 
     reset() {
-        this.filteredRows = this.allRows;
+        this.filteredRows = [...this.allRows]; // Create a copy
         this.currentPage = 1;
         this.update();
+    }
+
+    // Method to refresh rows after CRUD operations
+    refreshRows() {
+        this.loadRows();
     }
 }

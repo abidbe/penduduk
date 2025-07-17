@@ -47,22 +47,23 @@ class FilterComponent {
     }
 
     applyFilter() {
-        const filterValue = document.getElementById(this.filterId).value;
+        const filterValue = document.getElementById(this.filterId)?.value;
         const tbody = document.getElementById(this.tableId);
         const noDataRow = document.getElementById("noDataRow");
 
-        if (!tbody || !noDataRow) return;
+        if (!tbody) return;
 
         // Clear current rows (except noDataRow)
         const currentRows = tbody.querySelectorAll(this.originalRowsSelector);
         currentRows.forEach((row) => row.remove());
 
-        let filteredRows = this.originalRows;
+        let filteredRows = [...this.originalRows]; // Create a copy
 
         // Apply filter if value is selected
         if (filterValue) {
-            filteredRows = this.originalRows.filter((row) => {
-                return row.getAttribute(this.dataAttribute) === filterValue;
+            filteredRows = filteredRows.filter((row) => {
+                const attributeValue = row.getAttribute(this.dataAttribute);
+                return attributeValue === filterValue;
             });
         }
 
@@ -72,22 +73,28 @@ class FilterComponent {
             if (numberCell) {
                 numberCell.textContent = index + 1;
             }
-            tbody.insertBefore(row, noDataRow);
+            if (noDataRow) {
+                tbody.insertBefore(row, noDataRow);
+            } else {
+                tbody.appendChild(row);
+            }
         });
 
         // Show/hide no data row
-        if (filteredRows.length === 0) {
-            noDataRow.style.display = "";
-        } else {
-            noDataRow.style.display = "none";
+        if (noDataRow) {
+            if (filteredRows.length === 0) {
+                noDataRow.style.display = "";
+            } else {
+                noDataRow.style.display = "none";
+            }
         }
 
         // Reset pagination and search
         if (this.pagination) {
-            this.pagination.reset();
+            this.pagination.refreshRows();
         }
         if (this.search) {
-            this.search.reset();
+            this.search.clear();
         }
     }
 

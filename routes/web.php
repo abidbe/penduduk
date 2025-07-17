@@ -24,3 +24,5 @@ Route::get('/', function () {
 
 Route::resource('provinsi', ProvinsiController::class);
 Route::resource('kabupaten', KabupatenController::class);
+Route::resource('penduduk', PendudukController::class);
+Route::get('/penduduk/kabupaten/{provinsi}', [PendudukController::class, 'getKabupatenByProvinsi']);
