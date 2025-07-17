@@ -68,20 +68,20 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('provinsi.index') }}" class="@if (request()->routeIs('provinsi.*')) active @endif">
+                        <a href="{{ route('provinsi.index') }}" class="@if (request()->routeIs('provinsi.index')) active @endif">
                             <span class="text-lg">📍</span>
                             Provinsi
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('kabupaten.index') }}"
-                            class="@if (request()->routeIs('kabupaten.*')) active @endif">
+                            class="@if (request()->routeIs('kabupaten.index')) active @endif">
                             <span class="text-lg">🏘️</span>
                             Kabupaten/Kota
                         </a>
                     </li>
                     <li>
-                        <a href="{{ route('penduduk.index') }}" class="@if (request()->routeIs('penduduk.*')) active @endif">
+                        <a href="{{ route('penduduk.index') }}" class="@if (request()->routeIs('penduduk.index')) active @endif">
                             <span class="text-lg">👥</span>
                             Penduduk
                         </a>

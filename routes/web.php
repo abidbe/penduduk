@@ -4,6 +4,7 @@ use App\Http\Controllers\KabupatenController;
 use App\Http\Controllers\PendudukController;
 use App\Http\Controllers\ProvinsiController;
 use App\Models\Kabupaten;
+use App\Models\Penduduk;
 use App\Models\Provinsi;
 use Illuminate\Support\Facades\Route;
 
@@ -19,7 +20,30 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('dashboard.index');
+    $totalProvinsi = Provinsi::count();
+    $totalKabupaten = Kabupaten::count();
+    $totalPenduduk = Penduduk::count();
+    $rataRataUmur = Penduduk::avg('umur') ?? 0;
+
+    $pendudukTerbaru = Penduduk::with(['kabupaten'])
+        ->orderBy('created_at', 'desc')
+        ->take(5)
+        ->get();
+
+    $topKabupaten = Kabupaten::with(['provinsi'])
+        ->withCount('penduduk')
+        ->orderBy('penduduk_count', 'desc')
+        ->take(5)
+        ->get();
+
+    return view('dashboard.index', compact(
+        'totalProvinsi',
+        'totalKabupaten',
+        'totalPenduduk',
+        'rataRataUmur',
+        'pendudukTerbaru',
+        'topKabupaten'
+    ));
 })->name('dashboard');
 
 Route::resource('provinsi', ProvinsiController::class);

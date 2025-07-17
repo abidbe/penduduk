@@ -11,8 +11,7 @@
                 <i class="text-3xl">🗺️</i>
             </div>
             <div class="stat-title">Total Provinsi</div>
-            <div class="stat-value text-primary">34</div>
-            <div class="stat-desc">↗︎ 2 (6%)</div>
+            <div class="stat-value text-primary">{{ $totalProvinsi }}</div>
         </div>
 
         <div class="stat bg-base-100 shadow-lg rounded-lg">
@@ -20,8 +19,7 @@
                 <i class="text-3xl">📍</i>
             </div>
             <div class="stat-title">Total Kabupaten</div>
-            <div class="stat-value text-secondary">514</div>
-            <div class="stat-desc">↗︎ 15 (3%)</div>
+            <div class="stat-value text-secondary">{{ $totalKabupaten }}</div>
         </div>
 
         <div class="stat bg-base-100 shadow-lg rounded-lg">
@@ -29,17 +27,15 @@
                 <i class="text-3xl">👥</i>
             </div>
             <div class="stat-title">Total Penduduk</div>
-            <div class="stat-value text-accent">273.8M</div>
-            <div class="stat-desc">↗︎ 1.2M (0.4%)</div>
+            <div class="stat-value text-accent">{{ number_format($totalPenduduk) }}</div>
         </div>
 
         <div class="stat bg-base-100 shadow-lg rounded-lg">
             <div class="stat-figure text-success">
                 <i class="text-3xl">📊</i>
             </div>
-            <div class="stat-title">Data Terbaru</div>
-            <div class="stat-value text-success">2024</div>
-            <div class="stat-desc">↗︎ Update terbaru</div>
+            <div class="stat-title">Rata-rata Umur</div>
+            <div class="stat-value text-success">{{ number_format($rataRataUmur, 1) }}</div>
         </div>
     </div>
 
@@ -47,36 +43,26 @@
         <!-- Recent Data -->
         <div class="card bg-base-100 shadow-lg">
             <div class="card-body">
-                <h2 class="card-title">📋 Data Terbaru</h2>
+                <h2 class="card-title">📋 Data Penduduk Terbaru</h2>
                 <div class="overflow-x-auto">
                     <table class="table table-zebra w-full">
                         <thead>
                             <tr>
-                                <th>Provinsi</th>
+                                <th>NIK</th>
+                                <th>Nama</th>
                                 <th>Kabupaten</th>
-                                <th>Jumlah Penduduk</th>
-                                <th>Status</th>
+                                <th>Umur</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>DKI Jakarta</td>
-                                <td>Jakarta Pusat</td>
-                                <td>914,182</td>
-                                <td><span class="badge badge-success">Aktif</span></td>
-                            </tr>
-                            <tr>
-                                <td>Jawa Barat</td>
-                                <td>Bandung</td>
-                                <td>2,444,160</td>
-                                <td><span class="badge badge-success">Aktif</span></td>
-                            </tr>
-                            <tr>
-                                <td>Jawa Timur</td>
-                                <td>Surabaya</td>
-                                <td>2,874,699</td>
-                                <td><span class="badge badge-success">Aktif</span></td>
-                            </tr>
+                            @foreach ($pendudukTerbaru as $penduduk)
+                                <tr>
+                                    <td>{{ $penduduk->nik }}</td>
+                                    <td>{{ $penduduk->nama }}</td>
+                                    <td>{{ $penduduk->kabupaten->nama_kabupaten }}</td>
+                                    <td>{{ $penduduk->umur }} tahun</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -87,23 +73,60 @@
         <div class="card bg-base-100 shadow-lg">
             <div class="card-body">
                 <h2 class="card-title">⚡ Quick Actions</h2>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="flex flex-col md:flex-row md:flex-wrap gap-2">
                     <a href="{{ route('provinsi.index') }}" class="btn btn-primary">
                         <i class="mr-2">🗺️</i>
-                        Kelola Provinsi
+                        Provinsi
                     </a>
                     <a href="{{ route('kabupaten.index') }}" class="btn btn-secondary">
                         <i class="mr-2">📍</i>
-                        Kelola Kabupaten
+                        Kabupaten
                     </a>
-                    <button class="btn btn-accent">
+                    <a href="{{ route('penduduk.index') }}" class="btn btn-accent">
+                        <i class="mr-2">👥</i>
+                        Penduduk
+                    </a>
+                    <a href="{{ route('provinsi.laporan') }}" class="btn btn-info">
                         <i class="mr-2">📊</i>
-                        Lihat Laporan
-                    </button>
-                    <button class="btn btn-info">
-                        <i class="mr-2">⚙️</i>
-                        Pengaturan
-                    </button>
+                        Laporan Provinsi
+                    </a>
+                    <a href="{{ route('kabupaten.laporan') }}" class="btn btn-info">
+                        <i class="mr-2">📊</i>
+                        Laporan Kabupaten
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Kabupaten by Population -->
+    <div class="mt-6">
+        <div class="card bg-base-100 shadow-lg">
+            <div class="card-body">
+                <h2 class="card-title">🏆 Top 5 Kabupaten Berdasarkan Jumlah Penduduk</h2>
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra w-full">
+                        <thead>
+                            <tr>
+                                <th>Ranking</th>
+                                <th>Kabupaten</th>
+                                <th>Provinsi</th>
+                                <th>Jumlah Penduduk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($topKabupaten as $index => $kabupaten)
+                                <tr>
+                                    <td>
+                                        <div class="badge badge-primary">{{ $index + 1 }}</div>
+                                    </td>
+                                    <td>{{ $kabupaten->nama_kabupaten }}</td>
+                                    <td>{{ $kabupaten->provinsi->nama_provinsi }}</td>
+                                    <td>{{ number_format($kabupaten->penduduk_count) }} orang</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
