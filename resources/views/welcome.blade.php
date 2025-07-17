@@ -54,7 +54,7 @@
         <div class="drawer-side">
             <label for="drawer-toggle" class="drawer-overlay"></label>
             <aside class="w-64 min-h-full bg-base-100 shadow-lg">
-                <div class="p-4">
+                <div class="w-full p-4 flex justify-center ">
                     <h2 class="text-2xl font-bold text-primary">Data Penduduk</h2>
                 </div>
                 <ul class="menu p-4 w-full">
@@ -66,15 +66,15 @@
                     </li>
                     <li>
                         <a href="{{ route('provinsi.index') }}" class="@if (request()->routeIs('provinsi.*')) active @endif">
-                            <i class="w-5 h-5">🗺️</i>
+                            <i class="w-5 h-5">📍</i>
                             Provinsi
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('kabupaten.index') }}"
                             class="@if (request()->routeIs('kabupaten.*')) active @endif">
-                            <i class="w-5 h-5">📍</i>
-                            Kabupaten
+                            <i class="w-5 h-5">🏘️</i>
+                            Kabupaten/Kota
                         </a>
                     </li>
                 </ul>

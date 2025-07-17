@@ -1,111 +1,166 @@
-@extends('welcome')
+@extends('layouts.crud-base')
 
-@section('title', 'Dashboard - Admin Panel')
-@section('page-title', 'Dashboard')
+@section('title', 'Data Kabupaten/Kota - Admin Panel')
+@section('page-title', '🏘️ Data Kabupaten/Kota')
+@section('search-placeholder', 'Cari Kabupaten/Kota...')
+@section('table-id', 'kabupatenTable')
 
-@section('content')
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <!-- Stats Cards -->
-        <div class="stat bg-base-100 shadow-lg rounded-lg">
-            <div class="stat-figure text-primary">
-                <i class="text-3xl">🗺️</i>
-            </div>
-            <div class="stat-title">Total Provinsi</div>
-            <div class="stat-value text-primary">34</div>
-            <div class="stat-desc">↗︎ 2 (6%)</div>
-        </div>
+@section('table-headers')
+    <th>No</th>
+    <th>Nama Kabupaten/Kota</th>
+    <th>Provinsi</th>
+    <th>Aksi</th>
+@endsection
 
-        <div class="stat bg-base-100 shadow-lg rounded-lg">
-            <div class="stat-figure text-secondary">
-                <i class="text-3xl">📍</i>
-            </div>
-            <div class="stat-title">Total Kabupaten</div>
-            <div class="stat-value text-secondary">514</div>
-            <div class="stat-desc">↗︎ 15 (3%)</div>
-        </div>
+@section('table-rows')
+    @forelse ($kabupaten as $key => $item)
+        <tr>
+            <td>{{ $key + 1 }}</td>
+            <td>{{ $item->nama_kabupaten }}</td>
+            <td>{{ $item->provinsi->nama_provinsi }}</td>
+            <td>
+                <div class="flex gap-2">
+                    <button class="btn btn-sm btn-warning"
+                        onclick="editKabupaten({{ $item->id }}, '{{ $item->nama_kabupaten }}', {{ $item->provinsi_id }})">
+                        🔨 Edit
+                    </button>
+                    <button class="btn btn-sm btn-error text-white"
+                        onclick="deleteKabupaten({{ $item->id }}, '{{ $item->nama_kabupaten }}')">
+                        🗑️ Hapus
+                    </button>
+                </div>
+            </td>
+        </tr>
+    @empty
+        <tr id="noDataRow">
+            <td colspan="4" class="text-center py-8">
+                <div class="text-gray-500">Tidak ada data</div>
+            </td>
+        </tr>
+    @endforelse
 
-        <div class="stat bg-base-100 shadow-lg rounded-lg">
-            <div class="stat-figure text-accent">
-                <i class="text-3xl">👥</i>
-            </div>
-            <div class="stat-title">Total Penduduk</div>
-            <div class="stat-value text-accent">273.8M</div>
-            <div class="stat-desc">↗︎ 1.2M (0.4%)</div>
-        </div>
+    <!-- Hidden row untuk search result kosong -->
+    @if (count($kabupaten) > 0)
+        <tr id="noDataRow" style="display: none;">
+            <td colspan="4" class="text-center py-8">
+                <div class="text-gray-500">Tidak ada data</div>
+            </td>
+        </tr>
+    @endif
+@endsection
 
-        <div class="stat bg-base-100 shadow-lg rounded-lg">
-            <div class="stat-figure text-success">
-                <i class="text-3xl">📊</i>
-            </div>
-            <div class="stat-title">Data Terbaru</div>
-            <div class="stat-value text-success">2024</div>
-            <div class="stat-desc">↗︎ Update terbaru</div>
+@section('modals')
+    <!-- Add/Edit Modal -->
+    <div id="kabupatenModal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg mb-4" id="modalTitle">Tambah Kabupaten/Kota</h3>
+            <form id="kabupatenForm">
+                @csrf
+                <input type="hidden" id="kabupatenId" name="id">
+
+                <div class="form-control w-full mb-4">
+                    <label class="label">
+                        <span class="label-text">Nama Kabupaten/Kota</span>
+                    </label>
+                    <input type="text" id="namaKabupaten" name="nama_kabupaten"
+                        placeholder="Masukkan nama Kabupaten/Kota" class="input input-bordered w-full" required />
+                    <div id="nama_kabupatenError" class="text-error text-sm mt-1 hidden"></div>
+                </div>
+
+                <div class="form-control w-full mb-4">
+                    <label class="label">
+                        <span class="label-text">Provinsi</span>
+                    </label>
+                    <select id="provinsiId" name="provinsi_id" class="select select-bordered w-full" required>
+                        <option value="">Pilih Provinsi</option>
+                        @foreach ($provinsi as $prov)
+                            <option value="{{ $prov->id }}">{{ $prov->nama_provinsi }}</option>
+                        @endforeach
+                    </select>
+                    <div id="provinsi_idError" class="text-error text-sm mt-1 hidden"></div>
+                </div>
+
+                <div class="modal-action">
+                    <button type="button" class="btn btn-ghost" onclick="modal.close()">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Recent Data -->
-        <div class="card bg-base-100 shadow-lg">
-            <div class="card-body">
-                <h2 class="card-title">📋 Data Terbaru</h2>
-                <div class="overflow-x-auto">
-                    <table class="table table-zebra w-full">
-                        <thead>
-                            <tr>
-                                <th>Provinsi</th>
-                                <th>Kabupaten</th>
-                                <th>Jumlah Penduduk</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>DKI Jakarta</td>
-                                <td>Jakarta Pusat</td>
-                                <td>914,182</td>
-                                <td><span class="badge badge-success">Aktif</span></td>
-                            </tr>
-                            <tr>
-                                <td>Jawa Barat</td>
-                                <td>Bandung</td>
-                                <td>2,444,160</td>
-                                <td><span class="badge badge-success">Aktif</span></td>
-                            </tr>
-                            <tr>
-                                <td>Jawa Timur</td>
-                                <td>Surabaya</td>
-                                <td>2,874,699</td>
-                                <td><span class="badge badge-success">Aktif</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="card bg-base-100 shadow-lg">
-            <div class="card-body">
-                <h2 class="card-title">⚡ Quick Actions</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <a href="{{ route('provinsi.index') }}" class="btn btn-primary">
-                        <i class="mr-2">🗺️</i>
-                        Kelola Provinsi
-                    </a>
-                    <a href="{{ route('kabupaten.index') }}" class="btn btn-secondary">
-                        <i class="mr-2">📍</i>
-                        Kelola Kabupaten
-                    </a>
-                    <button class="btn btn-accent">
-                        <i class="mr-2">📊</i>
-                        Lihat Laporan
-                    </button>
-                    <button class="btn btn-info">
-                        <i class="mr-2">⚙️</i>
-                        Pengaturan
-                    </button>
-                </div>
+    <!-- Delete Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Konfirmasi Hapus</h3>
+            <p class="py-4">Apakah Anda yakin ingin menghapus Kabupaten/Kota <span id="deleteKabupatenName"
+                    class="font-bold"></span>?</p>
+            <div class="modal-action">
+                <button class="btn btn-ghost" onclick="deleteModal.close()">Batal</button>
+                <button class="btn btn-error" onclick="confirmDelete()">Hapus</button>
             </div>
         </div>
     </div>
+@endsection
+
+@section('alerts')
+    <div id="alertContainer" class="toast toast-top toast-end" style="display: none;">
+        <div class="text-white alert" id="alertBox">
+            <span id="alertMessage"></span>
+        </div>
+    </div>
+@endsection
+
+@section('scripts')
+    <script src="{{ asset('js/components/alert.js') }}"></script>
+    <script src="{{ asset('js/components/modal.js') }}"></script>
+    <script src="{{ asset('js/components/pagination.js') }}"></script>
+    <script src="{{ asset('js/components/search.js') }}"></script>
+    <script src="{{ asset('js/components/crud.js') }}"></script>
+    <script src="{{ asset('js/components/form.js') }}"></script>
+
+    <script>
+        // Initialize components
+        const alert = new AlertComponent();
+        const modal = new ModalComponent('kabupatenModal');
+        const deleteModal = new ModalComponent('deleteModal');
+        const pagination = new PaginationComponent('kabupatenTable', 10);
+        const search = new SearchComponent('searchInput', pagination, [1, 2]); // Search on nama_kabupaten and provinsi
+        const crud = new CrudHandler('/kabupaten', alert);
+        const formHandler = new FormHandler('kabupatenForm', modal, crud);
+
+        let currentDeleteId = null;
+
+        function openAddModal() {
+            document.getElementById('modalTitle').innerText = 'Tambah Kabupaten';
+            formHandler.reset();
+            document.getElementById('kabupatenId').value = '';
+            document.getElementById('provinsiId').value = '';
+            modal.open();
+        }
+
+        function editKabupaten(id, nama, provinsiId) {
+            document.getElementById('modalTitle').innerText = 'Edit Kabupaten';
+            formHandler.populate({
+                id: id,
+                nama_kabupaten: nama,
+                provinsi_id: provinsiId
+            });
+            modal.open();
+        }
+
+        function deleteKabupaten(id, nama) {
+            currentDeleteId = id;
+            document.getElementById('deleteKabupatenName').innerText = nama;
+            deleteModal.open();
+        }
+
+        function confirmDelete() {
+            if (currentDeleteId) {
+                crud.handleDelete(currentDeleteId, () => {
+                    deleteModal.close();
+                    setTimeout(() => location.reload(), 1000);
+                });
+            }
+        }
+    </script>
 @endsection
