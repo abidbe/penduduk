@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\KabupatenController;
+use App\Http\Controllers\PendudukController;
+use App\Http\Controllers\ProvinsiController;
+use App\Models\Kabupaten;
+use App\Models\Provinsi;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +19,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return view('dashboard.index');
+})->name('dashboard');
+
+Route::resource('provinsi', ProvinsiController::class);
+Route::resource('kabupaten', KabupatenController::class);
