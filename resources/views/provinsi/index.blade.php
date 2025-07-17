@@ -1,83 +1,53 @@
-@extends('welcome')
+@extends('layouts.crud-base')
 
 @section('title', 'Data Provinsi - Admin Panel')
-@section('page-title', 'Data Provinsi')
+@section('page-title', '📍 Data Provinsi')
+@section('search-placeholder', 'Cari provinsi...')
+@section('table-id', 'provinsiTable')
 
-@section('content')
-    <div class="card bg-base-100 shadow-lg">
-        <div class="card-body">
+@section('table-headers')
+    <th>No</th>
+    <th>Nama Provinsi</th>
+    <th>Aksi</th>
+@endsection
 
-            <!-- Header Section -->
-            <div class="flex w-full justify-center mb-6">
-                <h2 class="text-3xl card-title mb-4">📍 Data Provinsi</h2>
-            </div>
-
-            <div class="md:w-full flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <!-- Add Button -->
-                <button class="btn btn-primary" onclick="openAddModal()">
-                    <span class="text-xl">+</span>
-                    Tambah
-                </button>
-                <!-- Search -->
-                <div class="form-control">
-                    <input type="text" id="searchInput" placeholder="Cari provinsi..."
-                        class="input input-bordered w-full md:w-64" />
+@section('table-rows')
+    @forelse ($provinsi as $key => $item)
+        <tr>
+            <td>{{ $key + 1 }}</td>
+            <td>{{ $item->nama_provinsi }}</td>
+            <td>
+                <div class="flex gap-2">
+                    <button class="btn btn-sm btn-warning"
+                        onclick="editProvinsi({{ $item->id }}, '{{ $item->nama_provinsi }}')">
+                        🔨 Edit
+                    </button>
+                    <button class="btn btn-sm btn-error text-white"
+                        onclick="deleteProvinsi({{ $item->id }}, '{{ $item->nama_provinsi }}')">
+                        🗑️ Hapus
+                    </button>
                 </div>
-            </div>
+            </td>
+        </tr>
+    @empty
+        <tr id="noDataRow">
+            <td colspan="3" class="text-center py-8">
+                <div class="text-gray-500">Tidak ada data</div>
+            </td>
+        </tr>
+    @endforelse
 
-            <!-- Table -->
-            <div class="overflow-x-auto">
-                <table class="table table-zebra w-full">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Provinsi</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="provinsiTable">
-                        @foreach ($provinsi as $key => $item)
-                            <tr>
-                                <td>{{ $key + 1 }}</td>
-                                <td>{{ $item->nama_provinsi }}</td>
-                                <td>
-                                    <div class="flex gap-2">
-                                        <button class="btn btn-sm btn-warning"
-                                            onclick="editProvinsi({{ $item->id }}, '{{ $item->nama_provinsi }}')">
-                                            <span class="text-xl">🔨</span>
-                                            Edit
-                                        </button>
-                                        <button class="btn btn-sm btn-error text-white"
-                                            onclick="deleteProvinsi({{ $item->id }}, '{{ $item->nama_provinsi }}')">
-                                            <span class="text-xl">🗑️</span>
-                                            Hapus
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+    <!-- Hidden row untuk search result kosong -->
+    @if (count($provinsi) > 0)
+        <tr id="noDataRow" style="display: none;">
+            <td colspan="3" class="text-center py-8">
+                <div class="text-gray-500">Tidak ada data</div>
+            </td>
+        </tr>
+    @endif
+@endsection
 
-            <!-- Pagination -->
-            <div class="flex justify-end mt-6">
-                <div class="join">
-                    <button class="join-item btn" id="prevBtn" onclick="prevPage()">«</button>
-                    <button class="join-item btn" id="pageInfo">Page 1</button>
-                    <button class="join-item btn" id="nextBtn" onclick="nextPage()">»</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Alert -->
-    <div id="alertContainer" class="toast toast-top toast-end" style="display: none;">
-        <div class="text-white alert" id="alertBox">
-            <span id="alertMessage"></span>
-        </div>
-    </div>
-
+@section('modals')
     <!-- Add/Edit Modal -->
     <div id="provinsiModal" class="modal">
         <div class="modal-box">
@@ -91,215 +61,87 @@
                     </label>
                     <input type="text" id="namaProvinsi" name="nama_provinsi" placeholder="Masukkan nama provinsi"
                         class="input input-bordered w-full" required />
-                    <div id="namaProvinsiError" class="text-error text-sm mt-1 hidden"></div>
+                    <div id="nama_provinsiError" class="text-error text-sm mt-1 hidden"></div>
                 </div>
                 <div class="modal-action">
-                    <button type="button" class="btn btn-ghost" onclick="closeModal()">Batal</button>
+                    <button type="button" class="btn btn-ghost" onclick="modal.close()">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+    <!-- Delete Modal -->
     <div id="deleteModal" class="modal">
         <div class="modal-box">
             <h3 class="font-bold text-lg">Konfirmasi Hapus</h3>
             <p class="py-4">Apakah Anda yakin ingin menghapus provinsi <span id="deleteProvinsiName"
                     class="font-bold"></span>?</p>
             <div class="modal-action">
-                <button class="btn btn-ghost" onclick="closeDeleteModal()">Batal</button>
+                <button class="btn btn-ghost" onclick="deleteModal.close()">Batal</button>
                 <button class="btn btn-error" onclick="confirmDelete()">Hapus</button>
             </div>
         </div>
     </div>
+@endsection
+
+@section('alerts')
+    <div id="alertContainer" class="toast toast-top toast-end" style="display: none;">
+        <div class="text-white alert" id="alertBox">
+            <span id="alertMessage"></span>
+        </div>
+    </div>
+@endsection
+
+@section('scripts')
+    <script src="{{ asset('js/components/alert.js') }}"></script>
+    <script src="{{ asset('js/components/modal.js') }}"></script>
+    <script src="{{ asset('js/components/pagination.js') }}"></script>
+    <script src="{{ asset('js/components/search.js') }}"></script>
+    <script src="{{ asset('js/components/crud.js') }}"></script>
+    <script src="{{ asset('js/components/form.js') }}"></script>
 
     <script>
+        // Initialize components
+        const alert = new AlertComponent();
+        const modal = new ModalComponent('provinsiModal');
+        const deleteModal = new ModalComponent('deleteModal');
+        const pagination = new PaginationComponent('provinsiTable', 10);
+        const search = new SearchComponent('searchInput', pagination, [1]);
+        const crud = new CrudHandler('/provinsi', alert);
+        const formHandler = new FormHandler('provinsiForm', modal, crud);
+
         let currentDeleteId = null;
-        let currentPage = 1;
-        const itemsPerPage = 10;
-        let allRows = [];
-        let filteredRows = [];
 
-        // Initialize pagination
-        document.addEventListener('DOMContentLoaded', function() {
-            allRows = Array.from(document.querySelectorAll('#provinsiTable tr'));
-            filteredRows = allRows;
-            updatePagination();
-        });
-
-        // Show Alert
-        function showAlert(message, type = 'success') {
-            const alertContainer = document.getElementById('alertContainer');
-            const alertBox = document.getElementById('alertBox');
-            const alertMessage = document.getElementById('alertMessage');
-
-            alertMessage.textContent = message;
-            alertBox.className = `alert alert-${type}`;
-            alertContainer.style.display = 'block';
-
-            setTimeout(() => {
-                alertContainer.style.display = 'none';
-            }, 3000);
-        }
-
-        // Pagination functions
-        function updatePagination() {
-            const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-
-            // Hide all rows
-            allRows.forEach(row => row.style.display = 'none');
-
-            // Show current page rows
-            filteredRows.slice(startIndex, endIndex).forEach(row => row.style.display = '');
-
-            // Update row numbers
-            filteredRows.slice(startIndex, endIndex).forEach((row, index) => {
-                row.cells[0].textContent = startIndex + index + 1;
-            });
-
-            // Update pagination buttons
-            document.getElementById('prevBtn').disabled = currentPage === 1;
-            document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
-            document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
-        }
-
-        function nextPage() {
-            const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
-            if (currentPage < totalPages) {
-                currentPage++;
-                updatePagination();
-            }
-        }
-
-        function prevPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                updatePagination();
-            }
-        }
-
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-
-            filteredRows = allRows.filter(row => {
-                const namaProvinsi = row.cells[1].textContent.toLowerCase();
-                return namaProvinsi.includes(searchTerm);
-            });
-
-            currentPage = 1;
-            updatePagination();
-        });
-
-        // Open Add Modal
         function openAddModal() {
             document.getElementById('modalTitle').innerText = 'Tambah Provinsi';
-            document.getElementById('provinsiForm').reset();
+            formHandler.reset();
             document.getElementById('provinsiId').value = '';
-            document.getElementById('namaProvinsiError').classList.add('hidden');
-            document.getElementById('provinsiModal').classList.add('modal-open');
+            modal.open();
         }
 
-        // Edit Provinsi
         function editProvinsi(id, nama) {
             document.getElementById('modalTitle').innerText = 'Edit Provinsi';
-            document.getElementById('provinsiId').value = id;
-            document.getElementById('namaProvinsi').value = nama;
-            document.getElementById('namaProvinsiError').classList.add('hidden');
-            document.getElementById('provinsiModal').classList.add('modal-open');
+            formHandler.populate({
+                id: id,
+                nama_provinsi: nama
+            });
+            modal.open();
         }
 
-        // Close Modal
-        function closeModal() {
-            document.getElementById('provinsiModal').classList.remove('modal-open');
-        }
-
-        // Delete Provinsi
         function deleteProvinsi(id, nama) {
             currentDeleteId = id;
             document.getElementById('deleteProvinsiName').innerText = nama;
-            document.getElementById('deleteModal').classList.add('modal-open');
+            deleteModal.open();
         }
 
-        // Close Delete Modal
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.remove('modal-open');
-            currentDeleteId = null;
-        }
-
-        // Confirm Delete
         function confirmDelete() {
             if (currentDeleteId) {
-                fetch(`/provinsi/${currentDeleteId}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Accept': 'application/json',
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            showAlert('Provinsi berhasil dihapus', 'success');
-                            closeDeleteModal();
-                            setTimeout(() => location.reload(), 1000);
-                        } else {
-                            showAlert('Gagal menghapus data', 'error');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showAlert('Terjadi kesalahan', 'error');
-                    });
+                crud.handleDelete(currentDeleteId, () => {
+                    deleteModal.close();
+                    setTimeout(() => location.reload(), 1000);
+                });
             }
         }
-
-        // Form Submit
-        document.getElementById('provinsiForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const formData = new FormData(this);
-            const id = document.getElementById('provinsiId').value;
-            const url = id ? `/provinsi/${id}` : '/provinsi';
-            const method = id ? 'PUT' : 'POST';
-
-            if (method === 'PUT') {
-                formData.append('_method', 'PUT');
-            }
-
-            fetch(url, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content'),
-                        'Accept': 'application/json',
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const message = id ? 'Provinsi berhasil diupdate' : 'Provinsi berhasil ditambahkan';
-                        showAlert(message, 'success');
-                        closeModal();
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        if (data.errors && data.errors.nama_provinsi) {
-                            document.getElementById('namaProvinsiError').innerText = data.errors.nama_provinsi[
-                                0];
-                            document.getElementById('namaProvinsiError').classList.remove('hidden');
-                        } else {
-                            showAlert('Terjadi kesalahan saat menyimpan data', 'error');
-                        }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showAlert('Terjadi kesalahan', 'error');
-                });
-        });
     </script>
 @endsection
