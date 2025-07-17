@@ -15,18 +15,26 @@
 @section('table-rows')
     @forelse ($kabupaten as $key => $item)
         <tr>
-            <td>{{ $key + 1 }}</td>
-            <td>{{ $item->nama_kabupaten }}</td>
-            <td>{{ $item->provinsi->nama_provinsi }}</td>
-            <td>
-                <div class="flex gap-2">
-                    <button class="btn btn-sm btn-warning"
+            <td class="px-2 py-3">{{ $key + 1 }}</td>
+            <td class="px-2 py-3">
+                <div class="font-medium">{{ $item->nama_kabupaten }}</div>
+            </td>
+            <td class="px-2 py-3">
+                <div class="font-medium">{{ $item->provinsi->nama_provinsi }}</div>
+            </td>
+            <td class="px-2 py-3">
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-2">
+                    <button class="btn btn-sm btn-warning w-full sm:w-auto"
                         onclick="editKabupaten({{ $item->id }}, '{{ $item->nama_kabupaten }}', {{ $item->provinsi_id }})">
-                        🔨 Edit
+                        <span class="hidden sm:inline">🔨</span>
+                        <span class="sm:hidden">Edit</span>
+                        <span class="hidden sm:inline ml-1">Edit</span>
                     </button>
-                    <button class="btn btn-sm btn-error text-white"
+                    <button class="btn btn-sm btn-error text-white w-full sm:w-auto"
                         onclick="deleteKabupaten({{ $item->id }}, '{{ $item->nama_kabupaten }}')">
-                        🗑️ Hapus
+                        <span class="hidden sm:inline">🗑️</span>
+                        <span class="sm:hidden">Hapus</span>
+                        <span class="hidden sm:inline ml-1">Hapus</span>
                     </button>
                 </div>
             </td>
@@ -52,7 +60,7 @@
 @section('modals')
     <!-- Add/Edit Modal -->
     <div id="kabupatenModal" class="modal">
-        <div class="modal-box">
+        <div class="modal-box w-11/12 max-w-md mx-auto">
             <h3 class="font-bold text-lg mb-4" id="modalTitle">Tambah Kabupaten/Kota</h3>
             <form id="kabupatenForm">
                 @csrf
@@ -80,9 +88,10 @@
                     <div id="provinsi_idError" class="text-error text-sm mt-1 hidden"></div>
                 </div>
 
-                <div class="modal-action">
-                    <button type="button" class="btn btn-ghost" onclick="modal.close()">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                <div class="modal-action flex flex-col sm:flex-row gap-2">
+                    <button type="button" class="btn btn-ghost w-full sm:w-auto order-2 sm:order-1"
+                        onclick="modal.close()">Batal</button>
+                    <button type="submit" class="btn btn-primary w-full sm:w-auto order-1 sm:order-2">Simpan</button>
                 </div>
             </form>
         </div>
@@ -90,13 +99,14 @@
 
     <!-- Delete Modal -->
     <div id="deleteModal" class="modal">
-        <div class="modal-box">
+        <div class="modal-box w-11/12 max-w-md mx-auto">
             <h3 class="font-bold text-lg">Konfirmasi Hapus</h3>
             <p class="py-4">Apakah Anda yakin ingin menghapus Kabupaten/Kota <span id="deleteKabupatenName"
                     class="font-bold"></span>?</p>
-            <div class="modal-action">
-                <button class="btn btn-ghost" onclick="deleteModal.close()">Batal</button>
-                <button class="btn btn-error" onclick="confirmDelete()">Hapus</button>
+            <div class="modal-action flex flex-col sm:flex-row gap-2">
+                <button class="btn btn-ghost w-full sm:w-auto order-2 sm:order-1"
+                    onclick="deleteModal.close()">Batal</button>
+                <button class="btn btn-error w-full sm:w-auto order-1 sm:order-2" onclick="confirmDelete()">Hapus</button>
             </div>
         </div>
     </div>
