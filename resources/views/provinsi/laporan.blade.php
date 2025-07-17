@@ -78,7 +78,7 @@
 @endsection
 
 @section('alerts')
-    <div id="alertContainer" class="toast toast-top toast-end" style="display: none;">
+    <div id="alertContainer" class="toast toast-top toast-end" style="display: none; z-index: 9999;">
         <div class="text-white alert" id="alertBox">
             <span id="alertMessage"></span>
         </div>
