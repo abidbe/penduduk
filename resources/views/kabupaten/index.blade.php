@@ -26,14 +26,14 @@
 @section('table-rows')
     @forelse ($kabupaten as $key => $item)
         <tr data-provinsi-id="{{ $item->provinsi_id }}">
-            <td class="px-2 py-3">{{ $key + 1 }}</td>
-            <td class="px-2 py-3">
+            <td class="px-4 py-3">{{ $key + 1 }}</td>
+            <td class="px-4 py-3">
                 <div class="font-medium">{{ $item->nama_kabupaten }}</div>
             </td>
-            <td class="px-2 py-3">
+            <td class="px-4 py-3">
                 <div class="font-medium">{{ $item->provinsi->nama_provinsi }}</div>
             </td>
-            <td class="px-2 py-3">
+            <td class="px-4 py-3">
                 <div class="flex flex-col sm:flex-row gap-2 sm:gap-2">
                     <button class="btn btn-sm btn-warning w-full sm:w-auto"
                         onclick="editKabupaten({{ $item->id }}, '{{ $item->nama_kabupaten }}', {{ $item->provinsi_id }})">
