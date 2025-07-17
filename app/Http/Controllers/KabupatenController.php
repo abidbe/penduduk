@@ -18,6 +18,21 @@ class KabupatenController extends Controller
         return view('kabupaten.index', compact('kabupaten', 'provinsi'));
     }
 
+    public function laporan(Request $request)
+    {
+        $query = Kabupaten::with('provinsi')->withCount('penduduk');
+
+        // Filter berdasarkan provinsi jika ada
+        if ($request->has('provinsi_id') && $request->provinsi_id != '') {
+            $query->where('provinsi_id', $request->provinsi_id);
+        }
+
+        $laporanKabupaten = $query->orderBy('nama_kabupaten', 'asc')->get();
+        $provinsi = Provinsi::orderBy('nama_provinsi', 'asc')->get();
+
+        return view('kabupaten.laporan', compact('laporanKabupaten', 'provinsi'));
+    }
+
     /**
      * Show the form for creating a new resource.
      */

@@ -93,6 +93,13 @@
                             Laporan Provinsi
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('kabupaten.laporan') }}"
+                            class="@if (request()->routeIs('kabupaten.laporan')) active @endif">
+                            <span class="text-lg">📊</span>
+                            Laporan Kabupaten
+                        </a>
+                    </li>
                 </ul>
             </aside>
         </div>

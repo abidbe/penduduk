@@ -25,5 +25,6 @@ Route::get('/', function () {
 Route::resource('provinsi', ProvinsiController::class);
 Route::get('/laporan-provinsi', [ProvinsiController::class, 'laporan'])->name('provinsi.laporan');
 Route::resource('kabupaten', KabupatenController::class);
+Route::get('/laporan-kabupaten', [KabupatenController::class, 'laporan'])->name('kabupaten.laporan');
 Route::resource('penduduk', PendudukController::class);
 Route::get('/penduduk/kabupaten/{provinsi}', [PendudukController::class, 'getKabupatenByProvinsi']);
