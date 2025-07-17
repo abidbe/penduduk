@@ -15,6 +15,14 @@ class ProvinsiController extends Controller
         $provinsi = Provinsi::orderBy('created_at', 'desc')->get();
         return view('provinsi.index', compact('provinsi'));
     }
+    public function laporan()
+    {
+        $laporanProvinsi = Provinsi::withCount('penduduk')
+            ->orderBy('nama_provinsi', 'asc')
+            ->get();
+
+        return view('provinsi.laporan', compact('laporanProvinsi'));
+    }
 
     /**
      * Show the form for creating a new resource.

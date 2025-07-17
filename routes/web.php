@@ -23,6 +23,7 @@ Route::get('/', function () {
 })->name('dashboard');
 
 Route::resource('provinsi', ProvinsiController::class);
+Route::get('/laporan-provinsi', [ProvinsiController::class, 'laporan'])->name('provinsi.laporan');
 Route::resource('kabupaten', KabupatenController::class);
 Route::resource('penduduk', PendudukController::class);
 Route::get('/penduduk/kabupaten/{provinsi}', [PendudukController::class, 'getKabupatenByProvinsi']);

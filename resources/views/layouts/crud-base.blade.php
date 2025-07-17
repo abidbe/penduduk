@@ -10,10 +10,15 @@
 
             <!-- Action Bar -->
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-                <button class="btn btn-primary w-full sm:w-auto order-3 sm:order-1" onclick="openAddModal()">
-                    <span class="text-xl">+</span>
-                    Tambah
-                </button>
+                @hasSection('custom-button')
+                    @yield('custom-button')
+                @else
+                    <button class="btn btn-primary w-full sm:w-auto order-3 sm:order-1" onclick="openAddModal()">
+                        <span class="text-xl">+</span>
+                        Tambah
+                    </button>
+                @endif
+
                 <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto order-1 sm:order-2">
                     @yield('filters')
                     <div class="form-control w-full sm:w-auto">
@@ -36,6 +41,9 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Additional Content -->
+            @yield('additional-content')
 
             <!-- Pagination -->
             <div class="flex justify-center sm:justify-end mt-6">

@@ -86,6 +86,13 @@
                             Penduduk
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('provinsi.laporan') }}"
+                            class="@if (request()->routeIs('provinsi.laporan')) active @endif">
+                            <span class="text-lg">📊</span>
+                            Laporan Provinsi
+                        </a>
+                    </li>
                 </ul>
             </aside>
         </div>

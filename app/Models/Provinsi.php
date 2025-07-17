@@ -15,4 +15,8 @@ class Provinsi extends Model
     {
         return $this->hasMany(Kabupaten::class);
     }
+    public function penduduk()
+    {
+        return $this->hasManyThrough(Penduduk::class, Kabupaten::class);
+    }
 }
