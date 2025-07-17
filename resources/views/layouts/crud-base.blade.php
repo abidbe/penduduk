@@ -10,13 +10,16 @@
 
             <!-- Action Bar -->
             <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
-                <button class="btn btn-primary w-full sm:w-auto order-2 sm:order-1" onclick="openAddModal()">
+                <button class="btn btn-primary w-full sm:w-auto order-3 sm:order-1" onclick="openAddModal()">
                     <span class="text-xl">+</span>
                     Tambah
                 </button>
-                <div class="form-control w-full sm:w-auto order-1 sm:order-2">
-                    <input type="text" id="searchInput" placeholder="@yield('search-placeholder')"
-                        class="input input-bordered w-full sm:w-64" />
+                <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto order-1 sm:order-2">
+                    @yield('filters')
+                    <div class="form-control w-full sm:w-auto">
+                        <input type="text" id="searchInput" placeholder="@yield('search-placeholder')"
+                            class="input input-bordered w-full sm:w-64" />
+                    </div>
                 </div>
             </div>
 

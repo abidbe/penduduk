@@ -5,6 +5,17 @@
 @section('search-placeholder', 'Cari Kabupaten/Kota...')
 @section('table-id', 'kabupatenTable')
 
+@section('filters')
+    <div class="form-control w-full sm:w-auto">
+        <select id="provinsiFilter" class="select select-bordered w-full sm:w-48">
+            <option value="">Semua Provinsi</option>
+            @foreach ($provinsi as $prov)
+                <option value="{{ $prov->id }}">{{ $prov->nama_provinsi }}</option>
+            @endforeach
+        </select>
+    </div>
+@endsection
+
 @section('table-headers')
     <th>No</th>
     <th>Nama Kabupaten/Kota</th>
@@ -14,7 +25,7 @@
 
 @section('table-rows')
     @forelse ($kabupaten as $key => $item)
-        <tr>
+        <tr data-provinsi-id="{{ $item->provinsi_id }}">
             <td class="px-2 py-3">{{ $key + 1 }}</td>
             <td class="px-2 py-3">
                 <div class="font-medium">{{ $item->nama_kabupaten }}</div>
@@ -127,6 +138,7 @@
     <script src="{{ asset('js/components/search.js') }}"></script>
     <script src="{{ asset('js/components/crud.js') }}"></script>
     <script src="{{ asset('js/components/form.js') }}"></script>
+    <script src="{{ asset('js/components/filter.js') }}"></script>
 
     <script>
         // Initialize components
@@ -137,6 +149,11 @@
         const search = new SearchComponent('searchInput', pagination, [1, 2]); // Search on nama_kabupaten and provinsi
         const crud = new CrudHandler('/kabupaten', alert);
         const formHandler = new FormHandler('kabupatenForm', modal, crud);
+
+        // Initialize filter component
+        const provinsiFilter = new FilterComponent('provinsiFilter', 'kabupatenTable', 'data-provinsi-id')
+            .setPagination(pagination)
+            .setSearch(search);
 
         let currentDeleteId = null;
 
@@ -168,7 +185,9 @@
             if (currentDeleteId) {
                 crud.handleDelete(currentDeleteId, () => {
                     deleteModal.close();
-                    setTimeout(() => location.reload(), 1000);
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1000);
                 });
             }
         }
